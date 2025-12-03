@@ -1,0 +1,38 @@
+version: '3.8'
+
+services:
+  # Base de Datos MySQL
+  mysql_db:
+    image: mysql:8.0
+    container_name: muebleria_db
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      TZ: America/Santiago
+    ports:
+      - "3306:3306"
+
+  # Backend
+  backend:
+    build: ./backend/evaluacion3IngDeSoftware
+    container_name: muebleria_backend
+    restart: on-failure
+    ports:
+      - "8081:8080"
+    depends_on:
+      - mysql_db
+    environment:
+      MYSQL_HOST: mysql_db
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      spring.datasource.username: root
+      TZ: America/Santiago
+
+  # Frontend
+  frontend:
+    build: ./frontend
+    container_name: muebleria_frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend

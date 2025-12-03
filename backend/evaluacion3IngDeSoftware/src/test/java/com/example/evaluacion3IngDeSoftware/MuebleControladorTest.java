@@ -1,0 +1,27 @@
+package com.example.evaluacion3IngDeSoftware;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
+
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+
+@ActiveProfiles("test")
+@SpringBootTest
+@AutoConfigureMockMvc
+@Transactional
+class MuebleControladorTest {
+
+    @Autowired MockMvc mvc;
+    @Test
+    void listarMuebles() throws Exception {
+        mvc.perform(get("/api/muebles"))
+                .andExpect(status().isOk());
+    }
+}

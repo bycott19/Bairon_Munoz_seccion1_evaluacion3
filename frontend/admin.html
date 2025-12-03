@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Administración</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+
+    <style>
+        body { padding: 20px; background-color: #fff; font-family: sans-serif; }
+        .toast-container { z-index: 1055; }
+
+        .caja-fea {
+            border: 1px solid #ccc;
+            padding: 15px;
+            margin-bottom: 20px;
+            background-color: #f9f9f9;
+        }
+        h5 { margin-bottom: 15px; font-weight: bold; border-bottom: 1px solid #000; padding-bottom: 5px; }
+
+        input[type=number]::-webkit-inner-spin-button,
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        input[type=number] { -moz-appearance: textfield; }
+
+        .menu-simple {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border: 1px solid #dee2e6;
+            margin-bottom: 30px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="menu-simple d-flex justify-content-between align-items-center">
+        <span class="h4 mb-0">Panel de Administración</span>
+        <a href="index.html" class="text-decoration-none text-dark">← Volver a la Tienda</a>
+    </div>
+</div>
+
+<div class="container">
+
+    <ul class="nav nav-tabs mb-4" id="myTab" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="inventario-tab" data-bs-toggle="tab" data-bs-target="#inventario-pane" type="button">Inventario</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="crear-tab" data-bs-toggle="tab" data-bs-target="#crear-pane" type="button" onclick="cargarTablaVariantes()">Crear Producto</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="ventas-tab" data-bs-toggle="tab" data-bs-target="#ventas-pane" type="button" onclick="cargarTablaVentas()">Ventas</button>
+        </li>
+    </ul>
+
+    <div class="tab-content" id="myTabContent">
+
+        <div class="tab-pane fade show active" id="inventario-pane">
+            <div class="caja-fea" style="background: white;">
+                <h5>Listado de Inventario</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Producto</th>
+                            <th>Tipo</th>
+                            <th>Precio</th>
+                            <th style="min-width: 180px;">Stock</th>
+                            <th>Estado</th>
+                            <th class="text-center">Acciones</th>
+                        </tr>
+                        </thead>
+                        <tbody id="admin-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="tab-pane fade" id="crear-pane">
+
+            <div class="caja-fea">
+                <h5>Nuevo Mueble</h5>
+                <form id="form-mueble">
+                    <div class="row">
+                        <div class="col-md-12 mb-2">
+                            <label>Nombre:</label>
+                            <input type="text" id="nombre" class="form-control" required>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 mb-2">
+                            <label>Tipo:</label>
+                            <select id="tipo" class="form-select">
+                                <option value="SILLA">SILLA</option>
+                                <option value="MESA">MESA</option>
+                                <option value="SILLON">SILLON</option>
+                                <option value="ESTANTE">ESTANTE</option>
+                                <option value="CAJON">CAJON</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label>Tamaño:</label>
+                            <select id="tamano" class="form-select">
+                                <option value="PEQUENO">PEQUEÑO</option>
+                                <option value="MEDIANO" selected>MEDIANO</option>
+                                <option value="GRANDE">GRANDE</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label>Precio:</label>
+                            <input type="number" id="precio" class="form-control" required>
+                        </div>
+                        <div class="col-md-3 mb-2">
+                            <label>Stock:</label>
+                            <input type="number" id="stock" class="form-control" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-dark mt-2">Guardar Mueble</button>
+                </form>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="caja-fea">
+                        <h5>Nueva Variante</h5>
+                        <form id="form-variante">
+                            <div class="mb-2">
+                                <label>Nombre:</label>
+                                <input type="text" id="var-nombre" class="form-control" required>
+                            </div>
+                            <div class="mb-2">
+                                <label>Costo Extra:</label>
+                                <input type="number" id="var-precio" class="form-control" required>
+                            </div>
+                            <button type="submit" class="btn btn-secondary mt-2">Agregar Variante</button>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="caja-fea">
+                        <h5>Variantes Existentes</h5>
+                        <table class="table table-bordered mb-0">
+                            <thead>
+                            <tr>
+                                <th>Nombre</th>
+                                <th>Extra</th>
+                                <th class="text-end">Acción</th>
+                            </tr>
+                            </thead>
+                            <tbody id="tabla-variantes-body"></tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="tab-pane fade" id="ventas-pane">
+            <div class="caja-fea" style="background: white;">
+                <h5>Registro de Ventas</h5>
+                <div class="table-responsive">
+                    <table class="table table-bordered mb-0">
+                        <thead>
+                        <tr>
+                            <th>ID</th>
+                            <th>Fecha</th>
+                            <th>Cotización</th>
+                            <th class="text-end">Total</th>
+                            <th class="text-center">Detalle</th>
+                        </tr>
+                        </thead>
+                        <tbody id="ventas-table-body"></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<div class="modal fade" id="modalStock" tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Editar Stock</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <label class="form-label fw-bold" id="stock-nombre-mueble">Producto</label>
+                <input type="number" id="stock-input-nuevo" class="form-control" min="0">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                <button type="button" class="btn btn-primary" onclick="guardarNuevoStock()">Guardar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalDetalleVenta" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Detalle de Venta <span id="detalle-venta-id"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <table class="table table-bordered">
+                    <thead><tr><th>Producto</th><th>Variante</th><th>Cant.</th><th class="text-end">Subtotal</th></tr></thead>
+                    <tbody id="detalle-venta-body"></tbody>
+                </table>
+                <h5 class="text-end mt-3 fw-bold fs-6">Total Pagado: $<span id="detalle-venta-total"></span></h5>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toast-container"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="app.js"></script>
+<script>
+    cargarTablaAdmin();
+    cargarTablaVariantes();
+</script>
+</body>
+</html>
