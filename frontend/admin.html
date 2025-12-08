@@ -28,6 +28,14 @@
             border: 1px solid #dee2e6;
             margin-bottom: 30px;
         }
+
+        .msg-error {
+            color: #dc3545;
+            font-size: 0.875em;
+            margin-top: 0.25rem;
+            display: none;
+            font-weight: bold;
+        }
     </style>
 </head>
 <body>
@@ -57,7 +65,13 @@
 
         <div class="tab-pane fade show active" id="inventario-pane">
             <div class="caja-fea" style="background: white;">
-                <h5>Listado de Inventario</h5>
+                <div class="d-flex justify-content-between align-items-center mb-3" style="border-bottom: 1px solid #000; padding-bottom: 5px;">
+                    <h5 class="mb-0" style="border: none; padding: 0; margin: 0;">Listado de Inventario</h5>
+                    <button class="btn btn-sm btn-outline-dark" onclick="cargarTablaAdmin()">
+                        <i class="bi bi-arrow-clockwise"></i> Actualizar Tabla
+                    </button>
+                </div>
+
                 <div class="table-responsive">
                     <table class="table table-bordered mb-0">
                         <thead>
@@ -81,7 +95,7 @@
 
             <div class="caja-fea">
                 <h5>Nuevo Mueble</h5>
-                <form id="form-mueble">
+                <form id="form-mueble" novalidate>
                     <div class="row">
                         <div class="col-md-12 mb-2">
                             <label>Nombre:</label>
@@ -107,13 +121,17 @@
                                 <option value="GRANDE">GRANDE</option>
                             </select>
                         </div>
+
                         <div class="col-md-3 mb-2">
                             <label>Precio:</label>
                             <input type="number" id="precio" class="form-control" required min="0">
+                            <div id="error-precio" class="msg-error">Valor inválido</div>
                         </div>
+
                         <div class="col-md-3 mb-2">
                             <label>Stock:</label>
                             <input type="number" id="stock" class="form-control" required min="0">
+                            <div id="error-stock" class="msg-error">Valor inválido</div>
                         </div>
                     </div>
                     <button type="submit" class="btn btn-dark mt-2">Guardar Mueble</button>
@@ -124,7 +142,7 @@
                 <div class="col-md-6">
                     <div class="caja-fea">
                         <h5>Nueva Variante</h5>
-                        <form id="form-variante">
+                        <form id="form-variante" novalidate>
                             <div class="mb-2">
                                 <label>Nombre:</label>
                                 <input type="text" id="var-nombre" class="form-control" required>
@@ -132,6 +150,7 @@
                             <div class="mb-2">
                                 <label>Costo Extra:</label>
                                 <input type="number" id="var-precio" class="form-control" required min="0">
+                                <div id="error-var-precio" class="msg-error">Valor inválido</div>
                             </div>
                             <button type="submit" class="btn btn-secondary mt-2">Agregar Variante</button>
                         </form>
