@@ -164,6 +164,7 @@ async function borrarItem(itemId) {
 
 function actualizarContadorCart() { fetch(`${API_URL}/cotizaciones/${cotizacionActualId}`).then(r=>r.json()).then(c=>document.getElementById('cart-count').innerText=c.items.length); }
 
+// --- FUNCIÓN MEJORADA PARA MOSTRAR MENSAJE BONITO ---
 function finalizarCompra() {
     if(!confirm("¿Confirmar compra?")) return;
     fetch(`${API_URL}/ventas/confirmar?cotizacionId=${cotizacionActualId}`, { method: 'POST' }).then(async r => {
@@ -172,8 +173,19 @@ function finalizarCompra() {
             showToast("Compra Exitosa", "success");
             setTimeout(()=>window.location.reload(), 2000);
         } else {
-            const t=await r.text();
-            showToast(t, "danger");
+            // Obtenemos el texto de la respuesta
+            let errorMsg = await r.text();
+
+            // Intento de limpieza: Si el servidor sigue mandando JSON, tratamos de sacar solo el mensaje
+            try {
+                const json = JSON.parse(errorMsg);
+                if(json.message) errorMsg = json.message;
+                else if(json.error) errorMsg = json.error;
+            } catch(e) {
+                // Si no es JSON, es texto plano (lo que queremos), así que lo dejamos tal cual
+            }
+
+            showToast(errorMsg, "danger");
         }
     });
 }
@@ -204,8 +216,38 @@ function cargarTablaAdmin() {
     });
 }
 function cambiarEstado(id, act) { fetch(`${API_URL}/muebles/${id}/${act}`, { method: 'PATCH' }).then(() => { cargarTablaAdmin(); showToast(act==='activar'?'Activado':'Desactivado'); }); }
+
 async function abrirModalStock(id) { try { const r=await fetch(`${API_URL}/muebles/${id}`); muebleEnEdicion=await r.json(); document.getElementById('stock-nombre-mueble').innerText=muebleEnEdicion.nombre; document.getElementById('stock-input-nuevo').value=muebleEnEdicion.stock; modalStockBootstrap.show(); } catch(e){ showToast("Error cargar", "danger"); } }
-async function guardarNuevoStock() { if(!muebleEnEdicion) return; muebleEnEdicion.stock = parseInt(document.getElementById('stock-input-nuevo').value); try { const r=await fetch(`${API_URL}/muebles/${muebleEnEdicion.id}`, { method: 'PUT', headers: {'Content-Type':'application/json'}, body: JSON.stringify(muebleEnEdicion)}); if(r.ok) { modalStockBootstrap.hide(); cargarTablaAdmin(); showToast("Stock actualizado"); } } catch(e){ showToast("Error", "danger"); } }
+
+async function guardarNuevoStock() {
+    const inputStock = document.getElementById('stock-input-nuevo');
+    if (!inputStock.checkValidity()) {
+        inputStock.reportValidity();
+        return;
+    }
+
+    if(!muebleEnEdicion) return;
+
+    muebleEnEdicion.stock = parseInt(inputStock.value);
+
+    try {
+        const r = await fetch(`${API_URL}/muebles/${muebleEnEdicion.id}`, {
+            method: 'PUT',
+            headers: {'Content-Type':'application/json'},
+            body: JSON.stringify(muebleEnEdicion)
+        });
+
+        if(r.ok) {
+            modalStockBootstrap.hide();
+            cargarTablaAdmin();
+            showToast("Stock actualizado");
+        } else {
+            showToast("Error al actualizar", "danger");
+        }
+    } catch(e){
+        showToast("Error conexión", "danger");
+    }
+}
 
 function cargarTablaVariantes() {
     const tbody = document.getElementById('tabla-variantes-body');

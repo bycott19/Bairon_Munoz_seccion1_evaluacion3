@@ -1,6 +1,5 @@
 package com.example.evaluacion3IngDeSoftware.Servicios;
 
-
 import com.example.evaluacion3IngDeSoftware.Modelo.*;
 import com.example.evaluacion3IngDeSoftware.Repositorio.CotizacionRepositorio;
 import com.example.evaluacion3IngDeSoftware.Repositorio.MuebleRepositorio;
@@ -10,6 +9,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 public class VentaServicio {
@@ -34,19 +35,31 @@ public class VentaServicio {
             throw new RuntimeException("La cotización no tiene items");
         }
 
+        Map<Long, Integer> demandaPorMueble = new HashMap<>();
+
         for (CotizacionItem item : c.getItems()) {
             Mueble m = item.getMueble();
-
             if (m.getEstado() == EstadoMueble.INACTIVO) {
                 throw new RuntimeException("Venta cancelada: El mueble '" + m.getNombre() + "' no está disponible.");
             }
 
-            int disponible = m.getStock();
-            int requerido = item.getCantidad();
-            if (requerido > disponible) {
-                throw new RuntimeException("Stock insuficiente para el mueble '" + m.getNombre() + "'. Disponible: " + disponible + ", requerido: " + requerido);
+            Long id = m.getId();
+            demandaPorMueble.put(id, demandaPorMueble.getOrDefault(id, 0) + item.getCantidad());
+        }
+
+        for (Map.Entry<Long, Integer> entry : demandaPorMueble.entrySet()) {
+            Long muebleId = entry.getKey();
+            Integer cantidadTotalRequerida = entry.getValue();
+
+            Mueble m = muebleRepositorio.findById(muebleId)
+                    .orElseThrow(() -> new RuntimeException("Mueble no encontrado ID: " + muebleId));
+
+            if (cantidadTotalRequerida > m.getStock()) {
+                throw new RuntimeException("Stock insuficiente para '" + m.getNombre() +
+                        "'. Solicitas " + cantidadTotalRequerida + " en total, pero solo quedan " + m.getStock());
             }
         }
+
         c.setConfirmada(Boolean.TRUE);
         cotizacionRepositorio.save(c);
 
