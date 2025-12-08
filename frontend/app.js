@@ -226,24 +226,53 @@ const formMueble = document.getElementById('form-mueble');
 if(formMueble) {
     formMueble.addEventListener('submit', (e) => {
         e.preventDefault();
+
+        const precioVal = document.getElementById('precio').value;
+        const stockVal = document.getElementById('stock').value;
+
+        if (parseFloat(precioVal) < 0 || parseInt(stockVal) < 0) {
+            showToast("Error: El precio y el stock no pueden ser negativos.", "danger");
+            return;
+        }
+
         const data = {
             nombre: document.getElementById('nombre').value,
             tipo: document.getElementById('tipo').value,
             tamano: document.getElementById('tamano').value,
-            precioBase: document.getElementById('precio').value,
-            stock: document.getElementById('stock').value,
+            precioBase: precioVal,
+            stock: stockVal,
             material: 'Estandar', estado: 'ACTIVO'
         };
         fetch(`${API_URL}/muebles`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
-            .then(() => { formMueble.reset(); showToast("Mueble creado", "success"); })
-            .catch(() => showToast("Error al crear", "danger"));
+            .then(async (res) => {
+                if (!res.ok) {
+                    const errorText = await res.text();
+                    throw new Error(errorText || "Error al crear");
+                }
+                formMueble.reset();
+                showToast("Mueble creado", "success");
+            })
+            .catch((err) => {
+                let msg = err.message;
+                if(msg.includes('"message":')) {
+                    try { msg = JSON.parse(msg).message; } catch(e){}
+                }
+                showToast(msg, "danger");
+            });
     });
 }
 const formVariante = document.getElementById('form-variante');
 if(formVariante) {
     formVariante.addEventListener('submit', (e) => {
         e.preventDefault();
-        const data = { nombre: document.getElementById('var-nombre').value, incrementoPrecio: document.getElementById('var-precio').value };
+
+        const precioVal = document.getElementById('var-precio').value;
+        if (parseFloat(precioVal) < 0) {
+            showToast("Error: El precio no puede ser negativo.", "danger");
+            return;
+        }
+
+        const data = { nombre: document.getElementById('var-nombre').value, incrementoPrecio: precioVal };
         fetch(`${API_URL}/variantes`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
             .then(() => { formVariante.reset(); cargarTablaVariantes(); showToast("Variante creada", "success"); });
     });

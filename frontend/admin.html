@@ -109,11 +109,11 @@
                         </div>
                         <div class="col-md-3 mb-2">
                             <label>Precio:</label>
-                            <input type="number" id="precio" class="form-control" required>
+                            <input type="number" id="precio" class="form-control" required min="0">
                         </div>
                         <div class="col-md-3 mb-2">
                             <label>Stock:</label>
-                            <input type="number" id="stock" class="form-control" required>
+                            <input type="number" id="stock" class="form-control" required min="0">
                         </div>
                     </div>
                     <button type="submit" class="btn btn-dark mt-2">Guardar Mueble</button>
@@ -131,7 +131,7 @@
                             </div>
                             <div class="mb-2">
                                 <label>Costo Extra:</label>
-                                <input type="number" id="var-precio" class="form-control" required>
+                                <input type="number" id="var-precio" class="form-control" required min="0">
                             </div>
                             <button type="submit" class="btn btn-secondary mt-2">Agregar Variante</button>
                         </form>

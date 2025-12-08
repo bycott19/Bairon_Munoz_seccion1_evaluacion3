@@ -17,6 +17,12 @@ public class MuebleServicio {
 
     @Transactional
     public Mueble crear(Mueble m) {
+        if (m.getPrecioBase() == null || m.getPrecioBase().compareTo(java.math.BigDecimal.ZERO) < 0) {
+            throw new RuntimeException("El precio no puede ser negativo.");
+        }
+        if (m.getStock() == null || m.getStock() < 0) {
+            throw new RuntimeException("El stock no puede ser negativo.");
+        }
         if (m.getEstado() == null) {
             m.setEstado(EstadoMueble.ACTIVO);
         }
