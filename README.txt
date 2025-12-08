@@ -1,9 +1,10 @@
 COMO EJUECUTAR EL PROGRAMA
 
+------------------------------------------------------------------------------------------------------------------------
 1. EN PRIMER LUGAR DEBE TENER DOCKER DESKTOP ABIERTO PARA QUE FUNCIONE EL CODIGO
 ------------------------------------------------------------------------------------------------------------------------
 
-2. COMPILAR EL BACKEND (ACCEDA A LA RUTA DE LA CARPETA PRINCIPAL)
+2. ACCEDA A LA RUTA DE LA CARPETA PRINCIPAL CON EL CMD
 
     - EJEMPLO DE ACCESO A LA RUTA PRINCIPAL: cd C:\Users\bycot\IdeaProjects\Munoz_Bairon_seccion1_evaluacion3
 ------------------------------------------------------------------------------------------------------------------------
