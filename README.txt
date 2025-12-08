@@ -5,26 +5,10 @@ COMO EJUECUTAR EL PROGRAMA
 
 2. COMPILAR EL BACKEND (ACCEDA A LA RUTA DE LA CARPETA PRINCIPAL)
 
-    - EJEMPLO DE ACCESO A LA RUTA PRINCIPAÑ: cd C:\Users\bycot\IdeaProjects\Munoz_Bairon_seccion1_evaluacion3
-
-    - ACCEDER A LA RUTA DEL BACKEND: cd backend/evaluacion3IngDeSoftware
-
-    - COMPILAR EL BACKEND WINDOWS: .\mvnw.cmd clean package -DskipTests
-
-        - COMPILAR EL BACKEND LINUX/MAC: ./mvnw clean package -DskipTests
-
-    NOTA: Una vez hechos estos pasos le saldra un mensaje en el cmd que dira "BUILD SUCCESS"
+    - EJEMPLO DE ACCESO A LA RUTA PRINCIPAL: cd C:\Users\bycot\IdeaProjects\Munoz_Bairon_seccion1_evaluacion3
 ------------------------------------------------------------------------------------------------------------------------
 
-3. VOLVER A LA RUTA PRINCIPAL
-
-    - ESCRIBA EN EL CMD: cd ..
-    - VUELVA A ESCRIBIRLO : cd ..
-
-    NOTA: Volvera a la ruta inicial de la carpeta principal (La primera ruta que ingreso por el cmd)
-------------------------------------------------------------------------------------------------------------------------
-
-4. EJECUTAR EL PROYECTO COMPLETO
+3. EJECUTAR EL PROYECTO COMPLETO
 
     - INGRESE EL COMANDO EN EL CMD: docker-compose up --build
 

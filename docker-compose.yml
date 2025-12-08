@@ -11,7 +11,7 @@ services:
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       TZ: America/Santiago
     ports:
-      - "3306:3306"
+      - "3307:3306"
 
   # Backend
   backend:
