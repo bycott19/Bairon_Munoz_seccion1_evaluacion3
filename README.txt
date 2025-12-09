@@ -36,3 +36,16 @@ COMO EJUECUTAR EL PROGRAMA
           NO SE OPTO POR SEGURIDAD DE VALIDAR QUE USUARIO ACCEDE A ADMIN YA QUE NO ERA SOLICITADO, SOLO SE REALIZO LO
           PEDIDO EN EL ENUNCIADO.
 ------------------------------------------------------------------------------------------------------------------------
+
+TEMA APARTE, SI LE DA EL SIGUIENTE ERROR AL EJECUTAR:
+Attaching to muebleria_backend_bairon, muebleria_db_bairon, muebleria_frontend_bairon Error response from daemon: failed to set up container networking:
+driver failed programming external connectivity on endpoint muebleria_db_bairon (2cdeeb6f2027ed0aeb7e6cee1e78d6baf9693f37ee15c9ffdd443d5574b6ad64):
+Bind for 0.0.0.0:3307 failed: port is already allocated
+
+SIGNIFICA QUE EL PUERTO QUE UTILICE ESTA OCUPADO EN SU DISPOSITIVO, POR LO QUE DEBERA ACCEDER AL CODIGO Y CAMBIAR EL
+PUERTO MANUALMENTE:
+    1. ABRA EL ARCHIVO: docker-compose.yml
+    2. BUSQUE DONDE DICE EN BASE DE DATOS:     ports:
+                                                    - "3307:3306"
+    3. Y CAMBIE EL PRIMER PUERTO QUE SALGA POR UNO QUE TENGA DISPONIBLE, POR EJEMPLO: ports:
+                                                                                        - "3308:3306"
