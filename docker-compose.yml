@@ -10,8 +10,8 @@ services:
       MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
       MYSQL_DATABASE: ${MYSQL_DATABASE}
       TZ: America/Santiago
-    ports:
-      - "3307:3306"
+    #ports:
+    # - "3307:3306"
 
   # Backend
   backend:
