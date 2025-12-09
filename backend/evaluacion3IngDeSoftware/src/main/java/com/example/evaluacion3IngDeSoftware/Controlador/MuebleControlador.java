@@ -4,7 +4,7 @@ import com.example.evaluacion3IngDeSoftware.Modelo.Mueble;
 import com.example.evaluacion3IngDeSoftware.Servicios.MuebleServicio;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,10 +17,13 @@ public class MuebleControlador {
     private MuebleServicio muebleServicio;
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Mueble crear(@RequestBody Mueble mueble) {
-        Mueble creado = muebleServicio.crear(mueble);
-        return creado;
+    public ResponseEntity<?> crear(@RequestBody Mueble mueble) {
+        try {
+            Mueble creado = muebleServicio.crear(mueble);
+            return new ResponseEntity<>(creado, HttpStatus.CREATED);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @GetMapping
@@ -34,8 +37,13 @@ public class MuebleControlador {
     }
 
     @PutMapping("/{id}")
-    public Mueble actualizar(@PathVariable Long id, @RequestBody Mueble datos) {
-        return muebleServicio.actualizar(id, datos);
+    public ResponseEntity<?> actualizar(@PathVariable Long id, @RequestBody Mueble datos) {
+        try {
+            Mueble actualizado = muebleServicio.actualizar(id, datos);
+            return new ResponseEntity<>(actualizado, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.BAD_REQUEST);
+        }
     }
 
     @PatchMapping("/{id}/desactivar")

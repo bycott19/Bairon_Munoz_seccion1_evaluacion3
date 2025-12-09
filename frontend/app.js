@@ -164,7 +164,6 @@ async function borrarItem(itemId) {
 
 function actualizarContadorCart() { fetch(`${API_URL}/cotizaciones/${cotizacionActualId}`).then(r=>r.json()).then(c=>document.getElementById('cart-count').innerText=c.items.length); }
 
-// --- FUNCIÓN MEJORADA PARA MOSTRAR MENSAJE BONITO ---
 function finalizarCompra() {
     if(!confirm("¿Confirmar compra?")) return;
     fetch(`${API_URL}/ventas/confirmar?cotizacionId=${cotizacionActualId}`, { method: 'POST' }).then(async r => {
@@ -173,18 +172,12 @@ function finalizarCompra() {
             showToast("Compra Exitosa", "success");
             setTimeout(()=>window.location.reload(), 2000);
         } else {
-            // Obtenemos el texto de la respuesta
             let errorMsg = await r.text();
-
-            // Intento de limpieza: Si el servidor sigue mandando JSON, tratamos de sacar solo el mensaje
             try {
                 const json = JSON.parse(errorMsg);
                 if(json.message) errorMsg = json.message;
                 else if(json.error) errorMsg = json.error;
-            } catch(e) {
-                // Si no es JSON, es texto plano (lo que queremos), así que lo dejamos tal cual
-            }
-
+            } catch(e) {}
             showToast(errorMsg, "danger");
         }
     });
@@ -219,8 +212,10 @@ function cambiarEstado(id, act) { fetch(`${API_URL}/muebles/${id}/${act}`, { met
 
 async function abrirModalStock(id) { try { const r=await fetch(`${API_URL}/muebles/${id}`); muebleEnEdicion=await r.json(); document.getElementById('stock-nombre-mueble').innerText=muebleEnEdicion.nombre; document.getElementById('stock-input-nuevo').value=muebleEnEdicion.stock; modalStockBootstrap.show(); } catch(e){ showToast("Error cargar", "danger"); } }
 
+// --- FUNCIÓN ACTUALIZAR STOCK CON ALERTAS ---
 async function guardarNuevoStock() {
     const inputStock = document.getElementById('stock-input-nuevo');
+    // Mantenemos validación nativa por si acaso
     if (!inputStock.checkValidity()) {
         inputStock.reportValidity();
         return;
@@ -242,7 +237,15 @@ async function guardarNuevoStock() {
             cargarTablaAdmin();
             showToast("Stock actualizado");
         } else {
-            showToast("Error al actualizar", "danger");
+            // Aquí capturamos el mensaje que enviamos desde el backend
+            let errorMsg = await r.text();
+            try {
+                // Intentamos limpiar si viene como JSON
+                const json = JSON.parse(errorMsg);
+                if(json.message) errorMsg = json.message;
+            } catch(e) {}
+            // Mostramos el mensaje rojo
+            showToast(errorMsg, "danger");
         }
     } catch(e){
         showToast("Error conexión", "danger");
@@ -264,6 +267,7 @@ function eliminarVariante(id) {
     if(!confirm("¿Eliminar variante?")) return;
     fetch(`${API_URL}/variantes/${id}`, { method: 'DELETE' }).then(res => { if(res.ok) { showToast("Eliminada"); cargarTablaVariantes(); } else { showToast("Error al eliminar", "danger"); }});
 }
+
 const formMueble = document.getElementById('form-mueble');
 if(formMueble) {
     formMueble.addEventListener('submit', (e) => {
@@ -271,11 +275,6 @@ if(formMueble) {
 
         const precioVal = document.getElementById('precio').value;
         const stockVal = document.getElementById('stock').value;
-
-        if (parseFloat(precioVal) < 0 || parseInt(stockVal) < 0) {
-            showToast("Error: El precio y el stock no pueden ser negativos.", "danger");
-            return;
-        }
 
         const data = {
             nombre: document.getElementById('nombre').value,
@@ -285,24 +284,26 @@ if(formMueble) {
             stock: stockVal,
             material: 'Estandar', estado: 'ACTIVO'
         };
+
         fetch(`${API_URL}/muebles`, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) })
             .then(async (res) => {
                 if (!res.ok) {
-                    const errorText = await res.text();
-                    throw new Error(errorText || "Error al crear");
+                    let errorMsg = await res.text();
+                    try {
+                        const json = JSON.parse(errorMsg);
+                        if(json.message) errorMsg = json.message;
+                    } catch(e) {}
+                    throw new Error(errorMsg || "Error al crear");
                 }
                 formMueble.reset();
                 showToast("Mueble creado", "success");
             })
             .catch((err) => {
-                let msg = err.message;
-                if(msg.includes('"message":')) {
-                    try { msg = JSON.parse(msg).message; } catch(e){}
-                }
-                showToast(msg, "danger");
+                showToast(err.message, "danger");
             });
     });
 }
+
 const formVariante = document.getElementById('form-variante');
 if(formVariante) {
     formVariante.addEventListener('submit', (e) => {
